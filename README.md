@@ -60,7 +60,7 @@ Alternativ in *Profile → Text → Schrift* eine andere Schrift wählen.
 ./install-dotfiles.sh
 ```
 
-Das Skript kopiert `dotfiles/bash_profile`, `dotfiles/bashrc` und `dotfiles/dircolors` nach `~/.bash_profile`, `~/.bashrc` und `~/.dircolors`. Bestehende Dateien werden vorher nach `~/.terminal-themes-backup/<Datum>` gesichert. Danach ein neues Terminal-Fenster öffnen.
+Das Skript kopiert `dotfiles/bash_profile`, `dotfiles/bashrc` und `dotfiles/dircolors` nach `~/.bash_profile`, `~/.bashrc` und `~/.dircolors`. Bestehende Dateien werden vorher nach `~/.terminal-themes-backup/<Datum>` gesichert. Die `dotfiles/vimrc` (Maus dem Terminal überlassen, damit Kopieren und Einfügen auch in Vim klappt; `F2` schaltet `paste` um) wird nur nach `~/.vimrc` kopiert, wenn dort noch keine liegt. Danach ein neues Terminal-Fenster öffnen.
 
 Die `.bashrc` bringt mit: vi-Modus auf der Kommandozeile, kurzer Prompt `pfad (branch) $` mit den letzten zwei Ordnern (`…/projekt/src`; Anzahl über `PROMPT_DEPTH`), `user@host` nur bei SSH-Sitzungen, das `$` wird rot bei Fehlern, große History ohne Duplikate sowie nützliche Aliase.
 

@@ -1,0 +1,8 @@
+" ~/.vimrc — Ergänzungen für Terminal-Fenster (macOS und Git Bash)
+
+" Maus dem Terminal überlassen: Markieren, Kopieren und Einfügen
+" funktionieren dann wie in der Shell.
+set mouse=
+
+" Mehrzeiligen Text ohne Treppeneinrückung einfügen: F2 schaltet 'paste' um.
+set pastetoggle=<F2>
