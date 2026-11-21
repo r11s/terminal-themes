@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
-"""Erzeugt die Terminal.app-Profile (.terminal) im Ordner ../themes
-und die Farbtabelle der dircolors als docs/dircolors.svg.
+"""Erzeugt aus einer Farbquelle:
+  themes/            Terminal.app-Profile (.terminal, macOS)
+  windows-terminal/  JSON-Fragment für Windows Terminal (Farbschemata + Git-Bash-Profile)
+  mintty/            Themendateien für mintty (Git Bash Standardfenster)
+  docs/dircolors.svg Farbtabelle der dircolors
 
 Nur Python 3 (Standardbibliothek), läuft auf macOS und Linux:
     python3 tools/generate.py
 """
+import json
 import plistlib
+import uuid
 from pathlib import Path
 from plistlib import UID
 
@@ -167,6 +172,50 @@ def build_dircolors_svg():
             '<style>%s</style>%s</svg>\n') % (width, height, width, height, style, "".join(parts))
 
 
+# ---------- Windows Terminal (JSON-Fragment) ----------
+WT_NAMES = ["black", "red", "green", "yellow", "blue", "purple", "cyan", "white"]
+WT_NAMESPACE = uuid.UUID("6f2c1d0e-4a5b-4c3d-9e8f-7a1b2c3d4e5f")   # fest, damit die GUIDs stabil bleiben
+
+
+def _rgb(hex_color):
+    return ",".join(str(int(hex_color[i:i + 2], 16)) for i in (1, 3, 5))
+
+
+def build_windows_terminal():
+    schemes, profiles = [], []
+    for name, t in THEMES.items():
+        sc = {"name": name, "background": t["bg"], "foreground": t["fg"],
+              "cursorColor": t["cursor"], "selectionBackground": t["selection"]}
+        for i, n in enumerate(WT_NAMES):
+            sc[n] = t["ansi"][i]
+            sc["bright" + n.capitalize()] = t["bright"][i]
+        schemes.append(sc)
+        profiles.append({
+            "name": "Git Bash " + name,
+            "guid": "{%s}" % uuid.uuid5(WT_NAMESPACE, name),
+            "commandline": "%PROGRAMFILES%\\Git\\bin\\bash.exe --login -i",
+            "icon": "%PROGRAMFILES%\\Git\\mingw64\\share\\git\\git-for-windows.ico",
+            "startingDirectory": "%USERPROFILE%",
+            "colorScheme": name,
+            "font": {"face": "Cascadia Mono", "size": FONT_SIZE, "weight": "semi-light"},
+            "opacity": round(OPACITY * 100),
+            "useAcrylic": False,
+            "intenseTextStyle": "none",
+        })
+    return json.dumps({"profiles": profiles, "schemes": schemes}, indent=2, ensure_ascii=False) + "\n"
+
+
+# ---------- mintty (Themendatei; Einstellungen für Schrift usw. stehen in der README) ----------
+def build_mintty(t):
+    lines = ["ForegroundColour=" + _rgb(t["fg"]),
+             "BackgroundColour=" + _rgb(t["bg"]),
+             "CursorColour=" + _rgb(t["cursor"])]
+    for i, n in enumerate(ANSI_NAMES):
+        lines.append("%s=%s" % (n, _rgb(t["ansi"][i])))
+        lines.append("Bold%s=%s" % (n, _rgb(t["bright"][i])))
+    return "\n".join(lines) + "\n"
+
+
 def main():
     out = Path(__file__).resolve().parent.parent / "themes"
     out.mkdir(exist_ok=True)
@@ -174,6 +223,16 @@ def main():
         with open(out / ("%s.terminal" % name), "wb") as f:
             plistlib.dump(build(name, t), f, fmt=plistlib.FMT_XML)
         print("geschrieben:", out / ("%s.terminal" % name))
+    root = out.parent
+    wt = root / "windows-terminal"
+    wt.mkdir(exist_ok=True)
+    (wt / "terminal-themes.json").write_text(build_windows_terminal(), encoding="utf-8")
+    print("geschrieben:", wt / "terminal-themes.json")
+    mt = root / "mintty"
+    mt.mkdir(exist_ok=True)
+    for name, t in THEMES.items():
+        (mt / name).write_text(build_mintty(t), encoding="utf-8", newline="\n")
+        print("geschrieben:", mt / name)
     docs_dir = out.parent / "docs"
     docs_dir.mkdir(exist_ok=True)
     (docs_dir / "dircolors.svg").write_text(build_dircolors_svg(), encoding="utf-8")

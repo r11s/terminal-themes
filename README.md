@@ -1,18 +1,21 @@
 # terminal-themes
 
-Farbprofile für das **macOS Terminal.app** mit passender Shell-Konfiguration: vier Themes, eine `dircolors`-Datei für farbiges `ls` und eine `.bashrc` mit vi-Modus, Git-Prompt und History-Einstellungen.
+Farbprofile für das **macOS Terminal.app**, **Windows Terminal** und **mintty** (Git Bash) mit passender Shell-Konfiguration: fünf Themes, eine `dircolors`-Datei für farbiges `ls` und eine `.bashrc` mit vi-Modus, Git-Prompt und History-Einstellungen.
 
-Alle Profile teilen dieselben Einstellungen: Cascadia Mono SemiLight, 16 pt, Fenster 97×25, 96 % Deckkraft, kein Fettdruck.
+Alle Profile teilen dieselben Einstellungen: Cascadia Mono SemiLight, 16 pt, Fenster 97×25, 96 % Deckkraft, kein Fettdruck. Die Farben stehen an einer Stelle (`tools/generate.py`), alle Formate werden daraus erzeugt.
 
 ## Inhalt
 
 ```
 terminal-themes/
-├── themes/              Terminal.app-Profile (.terminal)
-├── dotfiles/            bash_profile, bashrc, dircolors
+├── themes/              Terminal.app-Profile (.terminal, macOS)
+├── windows-terminal/    JSON-Fragment für Windows Terminal (erzeugt)
+├── mintty/              Themendateien für mintty (erzeugt)
+├── dotfiles/            bash_profile, bashrc, dircolors (macOS und Git Bash)
 ├── docs/dircolors.svg   Farbtabelle der dircolors (erzeugt)
-├── tools/generate.py    erzeugt Profile und Farbtabelle neu
+├── tools/generate.py    erzeugt alle Profile und die Farbtabelle neu
 ├── install-dotfiles.sh  installiert die Dotfiles nach ~
+├── install-windows.sh   installiert Windows-Terminal-Profile und mintty-Themen
 ├── README.md
 └── LICENSE
 ```
@@ -69,7 +72,7 @@ Die `.bashrc` bringt mit: vi-Modus auf der Kommandozeile, kurzer Prompt `pfad (b
 brew install coreutils
 ```
 
-Die `.bashrc` aktiviert GNU-`ls` und lädt `~/.dircolors` automatisch, sobald `coreutils` installiert ist. Ohne `coreutils` gelten weiter die einfachen Farben der macOS-`ls`.
+Die `.bashrc` lädt `~/.dircolors` automatisch, sobald GNU-`ls` vorhanden ist: auf dem Mac nach `brew install coreutils`, unter Windows (Git Bash) immer. Ohne GNU-`ls` gelten weiter die einfachen Farben der macOS-`ls`.
 
 Die `dircolors` verwendet nur Vordergrundfarben, ohne Fettdruck und Hintergründe. Die Farben kommen aus der ANSI-Palette des jeweiligen Profils:
 
@@ -98,9 +101,38 @@ So sehen die Einträge in den einzelnen Profilen aus:
 
 Eigene Anpassungen gehören in `dotfiles/dircolors` (Format wie bei `dircolors -p`).
 
+## Windows (Git Bash)
+
+Die Dotfiles laufen unverändert in Git Bash (`./install-dotfiles.sh`). Für die Farben gibt es zwei Wege:
+
+```sh
+./install-windows.sh
+```
+
+Das Skript legt nur neue Dateien an; `settings.json` und `~/.minttyrc` bleiben unberührt.
+
+**Windows Terminal (empfohlen).** Das Skript kopiert `windows-terminal/terminal-themes.json` als [JSON-Fragment](https://learn.microsoft.com/windows/terminal/json-fragment-extensions) nach `%LOCALAPPDATA%\Microsoft\Windows Terminal\Fragments\terminal-themes\`. Nach einem Neustart gibt es fünf Profile **Git Bash Cornsilk**, **Git Bash Moccasin** … mit Farbschema, Cascadia Mono (semi-light, 16 pt), 96 % Deckkraft und ohne hervorgehobenen Fettdruck. Die Fenstergröße 97×25 ist eine globale Einstellung und gehört nicht ins Fragment: in `settings.json` oben `"initialCols": 97, "initialRows": 25` eintragen. Liegt Git nicht unter `C:\Program Files\Git`, den Pfad in `windows-terminal/terminal-themes.json` anpassen (oder per `tools/generate.py` neu erzeugen).
+
+**mintty (Standardfenster von Git Bash).** Das Skript kopiert die Themendateien aus `mintty/` nach `%APPDATA%\mintty\themes\`. In `~/.minttyrc` eintragen, hier am Beispiel Kaffee:
+
+```ini
+ThemeFile=Kaffee
+Font=Cascadia Mono SemiLight
+FontHeight=16
+Columns=97
+Rows=25
+BoldAsFont=no
+BoldAsColour=no
+Transparency=10
+```
+
+`Transparency=10` entspricht ungefähr 96 % Deckkraft (mintty zählt die Durchsichtigkeit von 0 bis 254).
+
+Die Schrift **Cascadia Mono** muss unter Windows installiert sein; sie wird mit Windows Terminal mitgeliefert, sonst gibt es sie auf [github.com/microsoft/cascadia-code](https://github.com/microsoft/cascadia-code).
+
 ## Profile selbst erzeugen
 
-`tools/generate.py` schreibt die `.terminal`-Dateien und die Farbtabelle `docs/dircolors.svg` neu (nur Python 3, keine Abhängigkeiten):
+`tools/generate.py` schreibt die `.terminal`-Dateien, das Windows-Terminal-Fragment, die mintty-Themen und die Farbtabelle `docs/dircolors.svg` neu (nur Python 3, keine Abhängigkeiten):
 
 ```sh
 python3 tools/generate.py
