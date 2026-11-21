@@ -59,7 +59,7 @@ Alternativ in *Profile → Text → Schrift* eine andere Schrift wählen.
 
 Das Skript kopiert `dotfiles/bash_profile`, `dotfiles/bashrc` und `dotfiles/dircolors` nach `~/.bash_profile`, `~/.bashrc` und `~/.dircolors`. Bestehende Dateien werden vorher nach `~/.terminal-themes-backup/<Datum>` gesichert. Danach ein neues Terminal-Fenster öffnen.
 
-Die `.bashrc` bringt mit: vi-Modus auf der Kommandozeile, Prompt `user@host:pfad (branch) $` (das `$` wird rot bei Fehlern), große History ohne Duplikate sowie nützliche Aliase.
+Die `.bashrc` bringt mit: vi-Modus auf der Kommandozeile, kurzer Prompt `pfad (branch) $` mit den letzten zwei Ordnern (`…/projekt/src`; Anzahl über `PROMPT_DEPTH`), `user@host` nur bei SSH-Sitzungen, das `$` wird rot bei Fehlern, große History ohne Duplikate sowie nützliche Aliase.
 
 ### dircolors
 

@@ -36,16 +36,39 @@ alias ...='cd ../..'
 alias gs='git status -sb'
 alias gl='git log --oneline --graph --decorate -20'
 
-# ---------- Prompt: user@host:pfad (git-branch) $  — $ rot bei Fehler ----------
+# ---------- Prompt: [user@host:]pfad (git-branch) $  — $ rot bei Fehler ----------
+# Kurz gehalten: nur die letzten zwei Ordner des Pfads; user@host nur bei SSH.
+# Mehr oder weniger Ordner: Zahl bei PROMPT_DEPTH ändern (z. B. 3).
+PROMPT_DEPTH=${PROMPT_DEPTH:-2}
 __git_branch() {
   local b
   b=$(git symbolic-ref --short -q HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null) || return
   printf ' (%s)' "$b"
 }
-__prompt() {
-  local rc=$? c=32
-  history -a
-  [ $rc -ne 0 ] && c=31
-  PS1="\[\e[1;36m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0;33m\]$(__git_branch)\[\e[0m\] \[\e[1;${c}m\]\\$\[\e[0m\] "
+__short_path() {
+  local p="$PWD" lead="/" IFS=/ parts n i out
+  if [ "$p" = "$HOME" ]; then printf '~'; return; fi
+  case "$p" in
+    "$HOME"/*) p="${p#"$HOME"/}"; lead="~/" ;;
+    *)         p="${p#/}" ;;
+  esac
+  [ -z "$p" ] && { printf '/'; return; }
+  set -f; parts=($p); set +f
+  n=${#parts[@]}
+  if [ "$n" -le "$PROMPT_DEPTH" ]; then printf '%s%s' "$lead" "$p"; return; fi
+  out=""
+  for ((i = n - PROMPT_DEPTH; i < n; i++)); do out="$out${out:+/}${parts[i]}"; done
+  printf '…/%s' "$out"
 }
+__prompt() {
+  local rc=$?
+  history -a
+  __P_C=32; [ $rc -ne 0 ] && __P_C=31
+  __P_PATH=$(__short_path)
+  __P_GIT=$(__git_branch)
+  __P_WHO=""; [ -n "$SSH_CONNECTION" ] && __P_WHO="${USER}@${HOSTNAME%%.*}:"
+}
+# Pfad und Branch stehen in Variablen und werden vom Prompt nur eingesetzt,
+# nicht erneut ausgewertet (Ordnernamen mit $ oder ` bleiben harmlos).
+PS1='\[\e[1;36m\]${__P_WHO}\[\e[0m\]\[\e[1;34m\]${__P_PATH}\[\e[0;33m\]${__P_GIT}\[\e[0m\] \[\e[1;${__P_C}m\]\$\[\e[0m\] '
 PROMPT_COMMAND=__prompt
