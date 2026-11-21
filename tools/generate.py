@@ -19,8 +19,8 @@ ANSI_NAMES = ["Black", "Red", "Green", "Yellow", "Blue", "Magenta", "Cyan", "Whi
 # ---------- Paletten ----------
 LIGHT_ANSI = ["#1a1a1a", "#a00000", "#005a14", "#6b3a00",
               "#0033a8", "#6a0dad", "#00565f", "#44484f"]
-LIGHT_BRIGHT = ["#3a3f46", "#b0000d", "#006b18", "#744300",
-                "#0040c0", "#7a14b8", "#006878", "#50555d"]
+LIGHT_BRIGHT = ["#5a6068", "#c4140a", "#0a7512", "#a24d00",
+                "#1a56d6", "#b01c92", "#0a7088", "#626870"]
 
 THEMES = {
     "Cornsilk": dict(
@@ -30,11 +30,17 @@ THEMES = {
         bg="#ffe4b5", fg="#000000", bold="#000000", cursor="#0033a8", selection="#b3d3f5",
         ansi=LIGHT_ANSI, bright=LIGHT_BRIGHT),
     "Dunkelgruen": dict(
-        bg="#1a1f14", fg="#dcd9c6", bold="#dcd9c6", cursor="#f0f6fc", selection="#3b4a2e",
-        ansi=["#5f6a64", "#ff7b72", "#3fb950", "#d29922",
-              "#58a6ff", "#bc8cff", "#39c5cf", "#b1bac4"],
-        bright=["#7d8a82", "#ffa198", "#56d364", "#e3b341",
-                "#79c0ff", "#d2a8ff", "#56d4dd", "#f0f6fc"]),
+        bg="#42483f", fg="#dcd9c6", bold="#dcd9c6", cursor="#f0f6fc", selection="#566252",
+        ansi=["#8a968f", "#eea09e", "#51cb68", "#e9aa0e",
+              "#8fb8e8", "#c3a8e5", "#24c6d1", "#bac2cb"],
+        bright=["#afb7b2", "#ffd2ce", "#adeab4", "#f1d9a0",
+                "#bee0ff", "#e8d3ff", "#a2e8ed", "#f0f6fc"]),
+    "Kaffee": dict(
+        bg="#322416", fg="#dcd9c6", bold="#dcd9c6", cursor="#f0f6fc", selection="#58442f",
+        ansi=["#7a8780", "#eb8d8a", "#39bf52", "#d69c0d",
+              "#78a9e3", "#b898e0", "#21b8c2", "#b1bac4"],
+        bright=["#9fa8a2", "#ffc6c1", "#9be5a3", "#eed08a",
+                "#acd8ff", "#e3c9ff", "#8be2e8", "#f0f6fc"]),
 }
 
 
