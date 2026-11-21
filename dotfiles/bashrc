@@ -28,6 +28,11 @@ fi
 if ls --version >/dev/null 2>&1 && command -v dircolors >/dev/null 2>&1; then
   if [ -r "$HOME/.dircolors" ]; then eval "$(dircolors -b "$HOME/.dircolors")"; else eval "$(dircolors -b)"; fi
   alias ls='ls --color=auto'
+  # Windows: Systemdateien mit sehr langen Namen im Home-Ordner (NTUSER.DAT{…}…) ausblenden,
+  # sonst schrumpft die Ausgabe auf eine Spalte. Mit ls -a sind sie weiter sichtbar.
+  case "$OSTYPE" in
+    msys*|cygwin*) alias ls='ls --color=auto --hide="NTUSER.DAT*" --hide="ntuser.*"' ;;
+  esac
 fi
 
 # ---------- Aliase ----------

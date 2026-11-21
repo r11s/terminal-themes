@@ -9,5 +9,8 @@ elif [ -x /usr/local/bin/brew ]; then
 fi
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
+# Windows (Git Bash): Login-Shell startet oft im Git-Ordner "/" -> ins Home wechseln
+case "$OSTYPE" in msys*|cygwin*) [ "$PWD" = / ] && cd "$HOME" ;; esac
+
 # Interaktive Einstellungen
 [ -f ~/.bashrc ] && . ~/.bashrc
