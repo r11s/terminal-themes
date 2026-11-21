@@ -41,6 +41,12 @@ THEMES = {
               "#78a9e3", "#b898e0", "#21b8c2", "#b1bac4"],
         bright=["#9fa8a2", "#ffc6c1", "#9be5a3", "#eed08a",
                 "#acd8ff", "#e3c9ff", "#8be2e8", "#f0f6fc"]),
+    "Backstein": dict(
+        bg="#702e22", fg="#dcd9c6", bold="#dcd9c6", cursor="#f0f6fc", selection="#83493c",
+        ansi=["#85918a", "#ed9998", "#43c75c", "#e2a50d",
+              "#86b2e6", "#bfa2e3", "#22c0cb", "#b4bdc6"],
+        bright=["#a8b1ab", "#ffc8c4", "#9fe6a7", "#efd391",
+                "#b1daff", "#e4ccff", "#8fe3e9", "#f0f6fc"]),
 }
 
 

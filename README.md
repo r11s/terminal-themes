@@ -24,10 +24,11 @@ terminal-themes/
 | **Moccasin** | `#FFE4B5` | `#000000` | 17,0 : 1 |
 | **Dunkelgruen** | `#42483F` | `#DCD9C6` | 6,6 : 1 |
 | **Kaffee** | `#322416` | `#DCD9C6` | 10,6 : 1 |
+| **Backstein** | `#702E22` | `#DCD9C6` | 7,0 : 1 |
 
 Die hellen Profile (Cornsilk, Moccasin) nutzen eine abgedunkelte, gesättigte Palette: Die normalen ANSI-Farben haben etwa 6 : 1 bis 10 : 1 Kontrast, die hellen Varianten sind deutlich kräftiger, aber noch mit mindestens 4,5 : 1.
 
-Dunkelgruen und Kaffee verwenden helle Paletten im Stil von GitHub Dark. Die normalen Farben sind dabei bewusst dunkler als die hellen Varianten (Abstand ΔE meist etwa 20 oder mehr), damit sich beide in `ls` und anderen Tools klar unterscheiden. Kaffee hat den dunkelsten Hintergrund und daher die etwas dunkleren Farben; Dunkelgruen hat einen helleren Hintergrund und deshalb hellere Farben.
+Dunkelgruen, Kaffee und Backstein verwenden helle Paletten im Stil von GitHub Dark. Die normalen Farben sind dabei bewusst dunkler als die hellen Varianten (Abstand ΔE meist etwa 20 oder mehr), damit sich beide in `ls` und anderen Tools klar unterscheiden. Kaffee und Backstein haben dunklere Hintergründe und daher die etwas dunkleren Farben; Dunkelgruen hat einen helleren Hintergrund und deshalb hellere Farben.
 
 ### Installation der Profile
 
