@@ -10,7 +10,8 @@ Alle Profile teilen dieselben Einstellungen: Cascadia Mono SemiLight, 16 pt, Fen
 terminal-themes/
 ├── themes/              Terminal.app-Profile (.terminal)
 ├── dotfiles/            bash_profile, bashrc, dircolors
-├── tools/generate.py    erzeugt die Profile neu
+├── docs/dircolors.svg   Farbtabelle der dircolors (erzeugt)
+├── tools/generate.py    erzeugt Profile und Farbtabelle neu
 ├── install-dotfiles.sh  installiert die Dotfiles nach ~
 ├── README.md
 └── LICENSE
@@ -91,23 +92,27 @@ Die `dircolors` verwendet nur Vordergrundfarben, ohne Fettdruck und Hintergründ
 | Audio | `00;36` | cyan |
 | Backup, temporär (`.bak`, `.tmp`, `~`) | `00;90` | helles Schwarz |
 
+So sehen die Einträge in den einzelnen Profilen aus:
+
+![Farbtabelle der dircolors in allen Profilen](docs/dircolors.svg)
+
 Eigene Anpassungen gehören in `dotfiles/dircolors` (Format wie bei `dircolors -p`).
 
 ## Profile selbst erzeugen
 
-`tools/generate.py` schreibt die `.terminal`-Dateien neu (nur Python 3, keine Abhängigkeiten):
+`tools/generate.py` schreibt die `.terminal`-Dateien und die Farbtabelle `docs/dircolors.svg` neu (nur Python 3, keine Abhängigkeiten):
 
 ```sh
 python3 tools/generate.py
 ```
 
-Farben, Schrift, Fenstergröße und Deckkraft stehen oben im Skript. Neue Themes entstehen durch einen weiteren Eintrag in `THEMES`.
+Farben, Schrift, Fenstergröße und Deckkraft stehen oben im Skript. Neue Themes entstehen durch einen weiteren Eintrag in `THEMES`; die Farbtabelle passt sich automatisch an.
 
 ## Hinweise
 
 - Die Deckkraft (96 %) wird als Alphawert der Hintergrundfarbe gespeichert. Ob sie nach dem Import stimmt, zeigt *Profile → Fenster → Hintergrund*.
 - „Fette Schrift verwenden" und „Helle Farben für fetten Text" sind ausgeschaltet; fetter Text hat dieselbe Farbe wie normaler Text.
-- Bei Deckkraft unter 100 % wirkt der Hintergrund je nach Fensterinhalt dahinter minimal anders als der Hexwert.
+- Bei Deckkraft unter 100 % wirkt der Hintergrund je nach Fensterinhalt dahinter minimal anders als der Hexwert; die Farbtabelle zeigt die Farben ohne diesen Effekt.
 
 ## Herkunft
 

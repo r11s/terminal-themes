@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Erzeugt die Terminal.app-Profile (.terminal) im Ordner ../themes.
+"""Erzeugt die Terminal.app-Profile (.terminal) im Ordner ../themes
+und die Farbtabelle der dircolors als docs/dircolors.svg.
 
 Nur Python 3 (Standardbibliothek), läuft auf macOS und Linux:
     python3 tools/generate.py
@@ -93,6 +94,79 @@ def build(name, t):
     return p
 
 
+# ---------- Farbtabelle der dircolors als Bild (docs/dircolors.svg) ----------
+# (Beschriftung, Beispieldatei, Farbcode aus dotfiles/dircolors)
+DIRCOLOR_ROWS = [
+    ("Typen", None, None),
+    ("Verzeichnis", "Documents", "34"),
+    ("Symlink", "link", "36"),
+    ("Kaputter Symlink", "kaputt", "31"),
+    ("Ausführbare Datei", "prog.sh", "32"),
+    ("Pipe", "pipe", "33"),
+    ("Socket", "socket", "35"),
+    ("Block-/Char-Device", "disk0", "37"),
+    ("Sonderrechte", None, None),
+    ("setuid", "setuid", "91"),
+    ("setgid", "setgid", "95"),
+    ("Sticky-Verzeichnis", "sticky", "94"),
+    ("Verzeichnis für alle schreibbar", "ow", "93"),
+    ("Sticky und für alle schreibbar (/tmp)", "tmp", "92"),
+    ("Endungen", None, None),
+    ("Archive (.zip .tar .gz .7z .deb)", "backup.zip", "31"),
+    ("Bilder, Video (.jpg .png .mp4 .mkv)", "foto.jpg", "35"),
+    ("Audio (.mp3 .flac .wav)", "song.mp3", "00;36"),
+    ("Backup, temporär (.bak .tmp .swp ~)", "notiz.bak", "00;90"),
+    ("Alles andere", None, None),
+    ("Normale Datei", "notiz.txt", None),
+]
+
+
+def _slot_color(theme, code):
+    """Farbe für einen ANSI-Code (30-37 normal, 90-97 hell) aus der Palette des Themes."""
+    if code is None:
+        return theme["fg"]
+    n = int(code.split(";")[-1])
+    return theme["ansi"][n - 30] if n < 90 else theme["bright"][n - 90]
+
+
+def build_dircolors_svg():
+    from xml.sax.saxutils import escape
+    names = list(THEMES)
+    x_label, x_code, x_cells, cell_w, row_h = 8, 262, 322, 118, 26
+    width = x_cells + cell_w * len(names) + 8
+    y = 30
+    parts = []
+    for i, n in enumerate(names):
+        parts.append('<text x="%d" y="20" class="h">%s</text>' % (x_cells + i * cell_w + 8, escape(n)))
+    parts.append('<text x="%d" y="20" class="h">Eintrag</text>' % x_label)
+    parts.append('<text x="%d" y="20" class="h">Code</text>' % x_code)
+    for label, example, code in DIRCOLOR_ROWS:
+        if example is None:
+            y += 10
+            parts.append('<text x="%d" y="%d" class="g">%s</text>' % (x_label, y + 16, escape(label)))
+            y += row_h
+            continue
+        parts.append('<text x="%d" y="%d" class="l">%s</text>' % (x_label, y + 17, escape(label)))
+        parts.append('<text x="%d" y="%d" class="c">%s</text>' % (x_code, y + 17, code or "–"))
+        for i, n in enumerate(names):
+            t = THEMES[n]
+            x = x_cells + i * cell_w
+            parts.append('<rect x="%d" y="%d" width="%d" height="%d" fill="%s"/>' % (x, y, cell_w, row_h, t["bg"]))
+            parts.append('<text x="%d" y="%d" class="m" style="fill:%s">%s</text>' % (
+                x + 8, y + 17, _slot_color(t, code), escape(example)))
+        y += row_h
+    height = y + 10
+    style = (
+        "text{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;fill:#1f2328}"
+        ".h{font-weight:600;fill:#59636e}.g{font-weight:600}.c{font-family:ui-monospace,Menlo,Consolas,monospace;"
+        "font-size:12px;fill:#59636e}.m{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}"
+        "@media (prefers-color-scheme: dark){text{fill:#e6edf3}.h,.c{fill:#9198a1}}"
+    )
+    return ('<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
+            'role="img" aria-label="Farbtabelle der dircolors in allen Profilen">'
+            '<style>%s</style>%s</svg>\n') % (width, height, width, height, style, "".join(parts))
+
+
 def main():
     out = Path(__file__).resolve().parent.parent / "themes"
     out.mkdir(exist_ok=True)
@@ -100,6 +174,10 @@ def main():
         with open(out / ("%s.terminal" % name), "wb") as f:
             plistlib.dump(build(name, t), f, fmt=plistlib.FMT_XML)
         print("geschrieben:", out / ("%s.terminal" % name))
+    docs_dir = out.parent / "docs"
+    docs_dir.mkdir(exist_ok=True)
+    (docs_dir / "dircolors.svg").write_text(build_dircolors_svg(), encoding="utf-8")
+    print("geschrieben:", docs_dir / "dircolors.svg")
 
 
 if __name__ == "__main__":
